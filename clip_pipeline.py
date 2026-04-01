@@ -10,7 +10,20 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # Laad Whisper model één keer
 model = whisper.load_model("small")  # klein genoeg voor Actions
-
+def segments_to_srt(segments, srt_path):
+    def format_time(seconds):
+        h = int(seconds // 3600)
+        m = int((seconds % 3600) // 60)
+        s = int(seconds % 60)
+        ms = int((seconds - int(seconds)) * 1000)
+        return f"{h:02}:{m:02}:{s:02},{ms:03}"
+    
+    with open(srt_path, "w", encoding="utf-8") as f:
+        for i, seg in enumerate(segments, start=1):
+            start = format_time(seg["start"])
+            end = format_time(seg["end"])
+            text = seg["text"].strip()
+            f.write(f"{i}\n{start} --> {end}\n{text}\n\n")
 def process_clip(url):
     clip_path = os.path.join(TEMP_DIR, "clip.mp4")
     audio_path = os.path.join(TEMP_DIR, "audio.wav")
@@ -27,6 +40,7 @@ def process_clip(url):
     # Whisper transcript + SRT
     result = model.transcribe(audio_path, language="nl")
     srt_file = audio_path.replace(".wav", ".srt")
+    segments_to_srt(result["segments"], srt_file)
     with open(srt_file, "w", encoding="utf-8") as f:
         f.write(result["srt"])
 
