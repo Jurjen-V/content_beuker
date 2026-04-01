@@ -3,7 +3,7 @@ name: Twitch Clip Processor Daily
 on:
   schedule:
     - cron: '0 9 * * *'  # dagelijks om 09:00 UTC
-  workflow_dispatch:       # ook handmatig triggerbaar
+  workflow_dispatch:
 
 jobs:
   process-clips:
@@ -17,16 +17,12 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: '3.11'
-    - name: Install whisper
-      run: pip install openai-whisper
-      
+
     - name: Install dependencies
       run: |
+        sudo apt update && sudo apt install ffmpeg -y
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        sudo apt update
-        sudo apt install ffmpeg -y
-        pip install yt-dlp
 
     - name: Run Twitch auto script
       run: python twitch_auto.py
