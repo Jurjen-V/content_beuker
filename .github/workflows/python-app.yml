@@ -1,35 +1,34 @@
-name: Twitch Clip Processor
+name: Twitch Clip Processor Daily
 
 on:
-  workflow_dispatch: # Zodat je het handmatig kunt starten
+  schedule:
+    - cron: '0 9 * * *'  # dagelijks om 09:00 UTC
+  workflow_dispatch:
 
 jobs:
-  build:
+  process-clips:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    - name: Checkout repo
+      uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-          cache: 'pip' # Versnelt toekomstige runs
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
 
-      - name: Install Dependencies
-        run: |
-          sudo apt-get update && sudo apt-get install -y ffmpeg
-          pip install yt-dlp openai-whisper torch
+    - name: Install dependencies
+      run: |
+        sudo apt update && sudo apt install ffmpeg -y
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
 
-      - name: Run Python script
-        run: python twitch_auto.py
-        env:
-          # Als je API keys nodig hebt, zet ze hier:
-          TWITCH_TOKEN: ${{ secrets.TWITCH_TOKEN }}
+    - name: Run Twitch auto script
+      run: python twitch_auto.py
 
-      - name: Upload resultaten
-        uses: actions/upload-artifact@v4
-        with:
-          name: processed-clips
-          path: output/
+    - name: Upload processed clips
+      uses: actions/upload-artifact@v4
+      with:
+        name: twitch-clips
+        path: output/*.mp4
