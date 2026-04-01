@@ -26,9 +26,27 @@ jobs:
 
     - name: Run Twitch auto script
       run: python twitch_auto.py
-
+        
+    - name: Commit and Push video's
+      run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Voeg de output map toe (zorg dat er een .gitkeep in zit als de map leeg begint)
+          git add output/
+          
+          # Alleen committen als er daadwerkelijk nieuwe bestanden zijn
+          if git diff --staged --quiet; then
+            echo "Geen nieuwe video's om te uploaden."
+          else
+            git commit -m "Nieuwe Twitch clips toegevoegd: $(date +'%Y-%m-%d %H:%M')"
+            git push
+          fi
     - name: Upload processed clips
       uses: actions/upload-artifact@v4
       with:
         name: twitch-clips
         path: output/*.mp4
+
+
+              
