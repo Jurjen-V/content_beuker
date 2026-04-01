@@ -41,8 +41,6 @@ def process_clip(url):
     result = model.transcribe(audio_path, language="nl")
     srt_file = audio_path.replace(".wav", ".srt")
     segments_to_srt(result["segments"], srt_file)
-    with open(srt_file, "w", encoding="utf-8") as f:
-        f.write(result["srt"])
 
     # Convert to vertical video
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
