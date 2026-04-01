@@ -30,7 +30,7 @@ jobs:
       run: python twitch_auto.py
 
     - name: Upload processed clips
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: twitch-clips
         path: output/*.mp4
