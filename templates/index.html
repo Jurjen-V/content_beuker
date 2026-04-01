@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <title>Twitch Clip Pipeline</title>
+</head>
+<body>
+    <h1>Twitch Clip Verwerker</h1>
+    <form method="post">
+        Twitch clip URL: <input type="text" name="url" required>
+        <input type="submit" value="Verwerk clip">
+    </form>
+    {% if message %}
+        <p>{{ message }}</p>
+    {% endif %}
+    <h2>Verwerkte clips</h2>
+    <ul>
+        {% for clip in clips %}
+            <li><a href="{{ url_for('download_clip', filename=clip.split('/')[-1]) }}">{{ clip.split('/')[-1] }}</a></li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
